@@ -30,7 +30,7 @@
 void ReportProgress(void)
 {
 #define PROGRESSPERCENT 10
-
+  if (STOPTIME != -1.0) {
       static long ProgressPercent = 0;
       static long ProgressCtr = 0;
       static double ProgressTime = 0.0;
@@ -45,6 +45,7 @@ void ReportProgress(void)
             ProgressPercent += PROGRESSPERCENT;
          }
       }
+  }
 }
 /**********************************************************************/
 void ManageFlags(void)
@@ -137,24 +138,25 @@ long AdvanceTime(void)
             itime = (long) ((SimTime+0.5*DTSIM)/(DTSIM));
             SimTime = ((double) itime)*DTSIM;
 
-            RealSystemTime(&UTC.Year,&UTC.doy,&UTC.Month,&UTC.Day,
-               &UTC.Hour,&UTC.Minute,&UTC.Second,DTSIM);
-            CivilTime = DateToTime(UTC.Year,UTC.Month,UTC.Day,
-               UTC.Hour,UTC.Minute,UTC.Second);
-            AtomicTime = CivilTime + LeapSec;
-            DynTime = AtomicTime + 32.184;
-            GpsTime = AtomicTime - 19.0;
+            // RealSystemTime(&UTC.Year,&UTC.doy,&UTC.Month,&UTC.Day,
+            //    &UTC.Hour,&UTC.Minute,&UTC.Second,DTSIM);
+            // CivilTime = DateToTime(UTC.Year,UTC.Month,UTC.Day,
+            //    UTC.Hour,UTC.Minute,UTC.Second);
+            // AtomicTime = CivilTime + LeapSec;
+            // DynTime = AtomicTime + 32.184;
+            // GpsTime = AtomicTime - 19.0;
 
-            TT.JulDay = TimeToJD(DynTime);
-            TimeToDate(DynTime,&TT.Year,&TT.Month,&TT.Day,
-               &TT.Hour,&TT.Minute,&TT.Second,DTSIM);
-            TT.doy = MD2DOY(TT.Year,TT.Month,TT.Day);
+            // TT.JulDay = TimeToJD(DynTime);
+            // TimeToDate(DynTime,&TT.Year,&TT.Month,&TT.Day,
+            //    &TT.Hour,&TT.Minute,&TT.Second,DTSIM);
+            // TT.doy = MD2DOY(TT.Year,TT.Month,TT.Day);
 
-            UTC.JulDay = TimeToJD(CivilTime);
-            UTC.doy = MD2DOY(UTC.Year,UTC.Month,UTC.Day);
+            // UTC.JulDay = TimeToJD(CivilTime);
+            // UTC.doy = MD2DOY(UTC.Year,UTC.Month,UTC.Day);
 
-            GpsTimeToGpsDate(GpsTime,&GpsRollover,&GpsWeek,&GpsSecond);
-            DynTime0 = DynTime - SimTime;
+            // GpsTimeToGpsDate(GpsTime,&GpsRollover,&GpsWeek,&GpsSecond);
+            // DynTime0 = DynTime - SimTime;
+            // DynTime = SimTime - DynTime0;
 
             break;
          case NOS3_TIME :
@@ -180,7 +182,7 @@ long AdvanceTime(void)
       }
 
       /* Check for end of run */
-      if (SimTime > STOPTIME) Done = 1;
+      if (STOPTIME != -1 && SimTime > STOPTIME) Done = 1;
       else Done = 0;
 
       return(Done);
@@ -330,7 +332,7 @@ long SimStep(void)
                PartitionForces(S); /* Orbit-affecting and "internal" */
             }
          }
-         Report();  /* File Output */
+         // Report();  /* File Output */
       }
 
       ReportProgress();
@@ -363,15 +365,17 @@ long SimStep(void)
             PartitionForces(S); /* Orbit-affecting and "internal" */
          }
       }
-      Report();  /* File Output */
+      // Report();  /* File Output */
 
       /* Exit when Stoptime is reached */
       if (SimComplete) {
          if (TimeMode == FAST_TIME) {
             RealRunTime(&TotalRunTime,DTSIM);
             printf("     Total Run Time = %9.2lf sec\n", TotalRunTime);
-            printf("     Sim Speed = %8.2lf x Real\n",
-               STOPTIME/TotalRunTime);
+	    if (STOPTIME != -1.0) {
+	      printf("     Sim Speed = %8.2lf x Real\n",
+		     STOPTIME/TotalRunTime);
+	    }
          }
       }
       return(SimComplete);

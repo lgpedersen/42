@@ -1,10 +1,7 @@
-import sys
-import os
-import re # Regular Expressions
+#!/usr/bin/env python
+import re
 
-########################################################################
 def GetSize(Name,DynSize):
-
       if Name.startswith('*'):
          Name = Name[1:]
          Size = DynSize
@@ -24,14 +21,10 @@ def GetSize(Name,DynSize):
                Name = NameList[0]
             else:
                Size = 1
-            #endif
-         #endif
-      #endif
 
       return(Name,Size)
-########################################################################
-def GetVariable(line,DynSize):
 
+def GetVariable(line,DynSize):
       if line.startswith('long'):
          Type = 'long'
          SplitLine = line.split()
@@ -76,12 +69,10 @@ def GetVariable(line,DynSize):
          Name = ''
          Type = ''
          Size = '0'
-      #endif
-      
-      return(Name,Type,Size)
-########################################################################
-def GetComment(Line):
 
+      return(Name,Type,Size)
+
+def GetComment(Line):
       CommentStart = Line.find('/*')
       if CommentStart != -1:
          Comment = Line[CommentStart:]
@@ -94,8 +85,7 @@ def GetComment(Line):
             Comment = Comment[:UnitStart-1]+Comment[UnitEnd+2:]
          else:
             Units = 'None'
-         #endif
-         
+
          SizeStart = Comment.find('[*')
          SizeEnd = Comment.find('*]')
          if SizeStart > 0 and SizeEnd > 0:
@@ -103,8 +93,7 @@ def GetComment(Line):
             Comment = Comment[:SizeStart-1]+Comment[SizeEnd+2:]
          else:
             DynSize = ''
-         #endif
-         
+
          ReadWriteStart = Comment.find('[~')
          ReadWriteEnd = Comment.find('~]')
          if ReadWriteStart > 0 and ReadWriteEnd > 0:
@@ -112,7 +101,6 @@ def GetComment(Line):
             Comment = Comment[:ReadWriteStart-1]+Comment[ReadWriteEnd+2:]
          else:
             ReadWrite = ''
-         #endif
 
          Comment = Comment.replace('/*',' ')
          Comment = Comment.replace('*/',' ')
@@ -122,59 +110,48 @@ def GetComment(Line):
          Units = ''
          DynSize = ''
          ReadWrite = ''
-      #endif
-      
+
       Line = Line.strip()
       # Strip trailing semicolon
       Line = Line[0:-1]
 
       return(Comment,Units,DynSize,ReadWrite,Line)
-########################################################################
-def WriteTableDefProlog(outfile,StructType,IsFirstStruct):
 
+def WriteTableDefProlog(outfile,StructType,IsFirstStruct):
       if IsFirstStruct:
          outfile.write('      {\n')
       else:
          outfile.write(',\n      {\n')
-      #endif
-      
+
       outfile.write('         \"Table Name\": \"'+StructType+'\",\n')
       outfile.write('         \"Table Type\": \"Structure\",\n')
       outfile.write('         \"Table Data\": [\n')
 
-########################################################################
 def AppendFile(outfile,FileName):
-
       appendfile = open(FileName,'r')
       for line in appendfile:
          outfile.write(line)
-      #next line
+
       appendfile.close()
 
-########################################################################
 def main():
-
-
       OutfileName = '42.json'
       InfileList = {'../Include/42types.h','../Include/AcTypes.h','../Kit/Include/orbkit.h'}
-      
+
       outfile = open(OutfileName,'w')
       outfile.write('{\n')
       outfile.write('   \"Table Definition\": [\n')
-      
-      
+
       IsFirstStruct = 1
-      
       Role = ''
 
       for InfileName in InfileList:
-         infile = open(InfileName,'rU')
+         infile = open(InfileName,'r')
 
          line = infile.readline()
          if line.startswith('/*~ Prototypes ~*/'):
             line = ''
-         #endif
-         
+
          while (line != ''): # EOF or reached Prototypes
             if line.startswith('struct'): # Found 'struct'
                IsFirstEntry = 1;
@@ -182,11 +159,10 @@ def main():
                StructType = LineList[1]
                WriteTableDefProlog(outfile,StructType,IsFirstStruct)
                IsFirstStruct = 0
-            
+
                line = infile.readline()
                if line.startswith('/*~ Prototypes ~*/'):
                   line = ''
-               #endif
                while not line.startswith('};'):
                   StrippedLine = line.strip()
                   if StrippedLine.startswith('/*~ Parameters ~*/'):
@@ -207,39 +183,33 @@ def main():
                   elif StrippedLine.startswith('/*~ Structures ~*/'):
                      Role = 'STRUCT'
                      StrippedLine = ''
-                  #endif
-               
+
                   if StrippedLine != '':
                      # Parse Comment first
                      (Comment,Units,DynSize,ReadWrite,StrippedLine) = GetComment(StrippedLine)
                      # Parse the rest
                      (Name,Type,Size) = GetVariable(StrippedLine,DynSize)
-                     
+
                      SimMsgDir = ''
                      AppMsgDir = ''
                      CmdMsgDir = ''
                      if '>' in ReadWrite:
                         SimMsgDir = 'WRITE'
-                        AppMsgDir = 'READ'                  
-                     #endif
+                        AppMsgDir = 'READ'
                      if '<' in ReadWrite:
                         SimMsgDir = 'READ'
                         AppMsgDir = 'WRITE'
-                     #endif
                      if '=' in ReadWrite:
                         SimMsgDir = 'READ_WRITE'
                         AppMsgDir = 'READ_WRITE'
-                     #endif
                      if '!' in ReadWrite:
                         CmdMsgDir = 'READ'
-                     #endif
-                  
+
                      if Name != '' and (SimMsgDir != '' or AppMsgDir != '' or CmdMsgDir != '' or Role != ''):
                         if IsFirstEntry:
                            outfile.write('            {\n')
                         else:
                            outfile.write(',\n            {\n')
-                        #endif
                         IsFirstEntry = 0
                         outfile.write('               \"Variable Name\":  \"'+Name+'\",\n')
                         outfile.write('               \"Description\":  \"'+Comment+'\",\n')
@@ -249,39 +219,29 @@ def main():
                            outfile.write('               \"Array Size\":  \"'+Size+'\",\n')
                         else:
                            outfile.write('               \"Data Type\":  \"'+Type+'\",\n')
-                        #endif
                         outfile.write('               \"Sim Read/Write\":   \"'+SimMsgDir+'\",\n')
                         outfile.write('               \"App Read/Write\":   \"'+AppMsgDir+'\",\n')
                         outfile.write('               \"Cmd Read\":   \"'+CmdMsgDir+'\",\n')
                         outfile.write('               \"Packet Role\":   \"'+Role+'\"\n')
-                  
+
                         outfile.write('            }')
-                     #endif
-                  #endif   
                   line = infile.readline()
                   if line.startswith('/*~ Prototypes ~*/'):
                      line = ''
-                  #endif
-               #end while
+
                outfile.write('\n')
                outfile.write('         ]\n')
                outfile.write('      }')
-            #endif
-            
+
             line = infile.readline()
             if line.startswith('/*~ Prototypes ~*/'): # Reached end of variable definitions
-               line = '' 
-            #endif
-         
-         #end while
+               line = ''
+
          infile.close()
-      #next InfileName
 
       outfile.write('\n   ]\n')
       outfile.write('}\n')
-      
-      outfile.close()   
-########################################################################
+
+      outfile.close()
+
 if __name__ == '__main__': main()
-
-

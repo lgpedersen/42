@@ -514,7 +514,7 @@ int main(int argc, char **argv)
       InitAC(&AC);
       AcFsw(&AC);
       
-      sprintf(FileName,"./Database/AcParmDump%02ld.txt",AC.ID);
+      sprintf(FileName,"AcParmDump%02ld.txt",AC.ID);
       ParmDumpFile = fopen(FileName,"wt");
       WriteToFile(ParmDumpFile,&AC);
       fclose(ParmDumpFile);
@@ -529,8 +529,3 @@ int main(int argc, char **argv)
       return(0);
 }
 #endif
-/* #ifdef __cplusplus
-** }
-** #endif
-*/
-

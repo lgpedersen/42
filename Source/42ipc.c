@@ -70,7 +70,7 @@ void InitInterProcessComm(void)
             I->Prefix[Ipx] = (char *) calloc(strlen(Prefix)+1,sizeof(char));
             strcpy(I->Prefix[Ipx],Prefix);
          }
-         
+
          I->Init = 1;
 
          if (I->Mode == IPC_TX) {
@@ -157,9 +157,9 @@ void InitInterProcessComm(void)
 /*********************************************************************/
 void InterProcessComm(void)
 {
-      struct IpcType *I;
+      struct IpcType *I = NULL;
       long Iipc;
-      
+
       for(Iipc=0;Iipc<Nipc;Iipc++) {
          I = &IPC[Iipc];
          if (I->Mode == IPC_TX) {

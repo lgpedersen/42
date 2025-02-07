@@ -1,26 +1,17 @@
-import sys
-import os
-import re # Regular Expressions
+#!/usr/bin/env python
 import json
 
-########################################################################
 def WriteProlog(outfile):
-
       outfile.write("/**********************************************************************/\n")
       outfile.write("void WriteAcToSocket(void)\n")
       outfile.write("{\n\n")
       outfile.write("      long i;\n")
       outfile.write("      int Success;\n\n")
-      
-########################################################################
+
 def WriteEpilog(outfile):
-
       outfile.write("}\n")
-########################################################################
+
 def WriteCodeBlock(outfile,Indent,FmtPrefix,ArgPrefix,VarString,IdxLen,Ni,Nj,StructIdxString,Nidx,FormatString):
-
-
-
       line = "      "+Indent+"sprintf(line,\""
       line += FmtPrefix
       line += VarString
@@ -28,32 +19,25 @@ def WriteCodeBlock(outfile,Indent,FmtPrefix,ArgPrefix,VarString,IdxLen,Ni,Nj,Str
       for i in range (0,Ni):
          for j in range (0,Nj):
             line += " "+FormatString
-         #next j
-      #next i
+
       line += "]\""+StructIdxString
       if Nj > 1:
          for i in range (0,Ni):
             for j in range (0,Nj):
                line += ","+ArgPrefix+VarString+"["+str(i)+"]["+str(j)+"]"
-            #next j
-         #next i
       elif Ni > 1:
          for i in range (0,Ni):
             line += ","+ArgPrefix+VarString+"["+str(i)+"]"
-         #next i
       else:
          line += ","+ArgPrefix+VarString
-      #endif
-      
+
       line += ");\n"
 
       outfile.write(line)
       outfile.write("      "+Indent+"Success = send(TxSocket,line,strlen(line),0);\n")
       outfile.write("      "+Indent+"if (EchoEnabled) printf(\"%s\",line);\n\n")
 
-########################################################################
 def ParseStruct(StructList,Struct,Indent,FmtPrefix,ArgPrefix,StructIdxString,Nidx,outfile):
-
       VarList = Struct["Table Data"]
       for Var in VarList:
          DataType = Var["Data Type"]
@@ -71,19 +55,15 @@ def ParseStruct(StructList,Struct,Indent,FmtPrefix,ArgPrefix,StructIdxString,Nid
                   else:
                      Ni = int(IdxList[0])
                      Nj = 1
-                  #endif
                else:
                   IdxLen = 0
                   Ni = 1
                   Nj = 1
-               #endif
                if DataType == "long":
                   FormatString = "%ld"
                else:
                   FormatString = "%lf"
-               #endif
                WriteCodeBlock(outfile,Indent,FmtPrefix,ArgPrefix,VarString,IdxLen,Ni,Nj,StructIdxString,Nidx,FormatString)
-            #endif
          else: # struct
             for SubStruct in StructList:
                if SubStruct["Table Name"] == Var["Data Type"]:
@@ -117,44 +97,33 @@ def ParseStruct(StructList,Struct,Indent,FmtPrefix,ArgPrefix,StructIdxString,Nid
                         Nidx += 1
                         Indent = ""
                         ParseStruct(StructList,SubStruct,Indent,LocalFmtPrefix,LocalArgPrefix,StructIdxString,Nidx,outfile)
-                     #endif
                   else:
                      LocalFmtPrefix += "."
                      LocalArgPrefix += "."
                      StructIdxString = ""
                      Indent = ""
                      ParseStruct(StructList,SubStruct,Indent,LocalFmtPrefix,LocalArgPrefix,StructIdxString,Nidx,outfile)
-                  #endif
-               #endif
-            #next SubStruct
-         #endif           
-      #next Var
-      
-########################################################################
+
 def main():
-      
       InfileName = 'AC.json'
       OutfileName = 'WriteAcToSocket.c'
       RootTableName = "AcType"
       FmtPrefix = "AC."
       ArgPrefix = "AC."
-      
-      infile = open(InfileName,'rU')
+
+      infile = open(InfileName,'r')
       StructDict = json.load(infile)
       infile.close()
 
-      StructList = StructDict["Table Definition"] 
+      StructList = StructDict["Table Definition"]
       for Struct in StructList:
          if Struct["Table Name"] == RootTableName:
             RootStruct = Struct
-         #endif
-      #next Struct
-      
+
       outfile = open(OutfileName,'w')
       WriteProlog(outfile)
-      ParseStruct(StructList,RootStruct,"",FmtPrefix,ArgPrefix,"",0,outfile) 
-      WriteEpilog(outfile)           
+      ParseStruct(StructList,RootStruct,"",FmtPrefix,ArgPrefix,"",0,outfile)
+      WriteEpilog(outfile)
       outfile.close()
-      
-########################################################################
+
 if __name__ == '__main__': main()

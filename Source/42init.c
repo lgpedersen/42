@@ -188,7 +188,7 @@ long DecodeString(char *s)
       else if (!strcmp(s,"TRITON")) return TRITON;
       else if (!strcmp(s,"NERIED")) return NERIED;
       else if (!strcmp(s,"CHARON")) return CHARON;
-      else if (sscanf(s,"MINORBODY_%ld",&i) == 1) return(55+i);
+      else if (sscanf(s,"MINORBODY_%lu",&i) == 1) return(55+i);
 
       else if (!strcmp(s,"SUN")) return SUN;
       else if (!strcmp(s,"PLANET")) return PLANET;
@@ -1047,98 +1047,98 @@ void InitRigidDyn(struct SCType *S)
       MapJointStatesToStateVector(S);
 
 /* .. Echo tree tables */
-      sprintf(filename,"Tree%02ld.42",S->ID);
-      outfile = FileOpen(InOutPath,filename,"w");
-      fprintf(outfile,"SC %2ld:  Nb = %2ld  Ng = %2ld\n\n",S->ID,S->Nb,S->Ng);
-      fprintf(outfile,"Connect Table:\n\n");
-      fprintf(outfile,"     ");
-      for(Ig=0;Ig<S->Ng;Ig++) fprintf(outfile,"  G[%02ld]",Ig);
-      fprintf(outfile,"\n");
-      for(Ib=0;Ib<S->Nb;Ib++) {
-         fprintf(outfile,"B[%02ld]:",Ib);
-         for(Ig=0;Ig<S->Ng;Ig++) {
-            fprintf(outfile,"  %3ld  ",D->ConnectTable[Ib][Ig]);
-         }
-         fprintf(outfile,"\n");
-      }
-      fprintf(outfile,"\n\n\nJoint Path Table:\n\n");
-      fprintf(outfile,"     ");
-      for(Ig=0;Ig<S->Ng;Ig++) fprintf(outfile,"  G[%02ld]",Ig);
-      fprintf(outfile,"\n");
-      for(Ib=0;Ib<S->Nb;Ib++) {
-         fprintf(outfile,"B[%02ld]:",Ib);
-         for(Ig=0;Ig<S->Ng;Ig++) {
-            fprintf(outfile,"  %3ld  ",D->JointPathTable[Ib][Ig].InPath);
-         }
-         fprintf(outfile,"\n");
-      }
-      fprintf(outfile,"\n\n\nBody Path Table:\n\n");
-      fprintf(outfile,"     ");
-      for(Jb=0;Jb<S->Nb;Jb++) fprintf(outfile,"  B[%02ld]",Jb);
-      fprintf(outfile,"\n");
-      for(Ib=0;Ib<S->Nb;Ib++) {
-         fprintf(outfile,"B[%02ld]:",Ib);
-         for(Jb=0;Jb<S->Nb;Jb++) {
-            fprintf(outfile,"  %3ld  ",D->BodyPathTable[Ib][Jb].InPath);
-         }
-         fprintf(outfile,"\n");
-      }
+//       sprintf(filename,"Tree%02ld.42",S->ID);
+//       outfile = FileOpen(InOutPath,filename,"w");
+//       fprintf(outfile,"SC %2ld:  Nb = %2ld  Ng = %2ld\n\n",S->ID,S->Nb,S->Ng);
+//       fprintf(outfile,"Connect Table:\n\n");
+//       fprintf(outfile,"     ");
+//       for(Ig=0;Ig<S->Ng;Ig++) fprintf(outfile,"  G[%02ld]",Ig);
+//       fprintf(outfile,"\n");
+//       for(Ib=0;Ib<S->Nb;Ib++) {
+//          fprintf(outfile,"B[%02ld]:",Ib);
+//          for(Ig=0;Ig<S->Ng;Ig++) {
+//             fprintf(outfile,"  %3ld  ",D->ConnectTable[Ib][Ig]);
+//          }
+//          fprintf(outfile,"\n");
+//       }
+//       fprintf(outfile,"\n\n\nJoint Path Table:\n\n");
+//       fprintf(outfile,"     ");
+//       for(Ig=0;Ig<S->Ng;Ig++) fprintf(outfile,"  G[%02ld]",Ig);
+//       fprintf(outfile,"\n");
+//       for(Ib=0;Ib<S->Nb;Ib++) {
+//          fprintf(outfile,"B[%02ld]:",Ib);
+//          for(Ig=0;Ig<S->Ng;Ig++) {
+//             fprintf(outfile,"  %3ld  ",D->JointPathTable[Ib][Ig].InPath);
+//          }
+//          fprintf(outfile,"\n");
+//       }
+//       fprintf(outfile,"\n\n\nBody Path Table:\n\n");
+//       fprintf(outfile,"     ");
+//       for(Jb=0;Jb<S->Nb;Jb++) fprintf(outfile,"  B[%02ld]",Jb);
+//       fprintf(outfile,"\n");
+//       for(Ib=0;Ib<S->Nb;Ib++) {
+//          fprintf(outfile,"B[%02ld]:",Ib);
+//          for(Jb=0;Jb<S->Nb;Jb++) {
+//             fprintf(outfile,"  %3ld  ",D->BodyPathTable[Ib][Jb].InPath);
+//          }
+//          fprintf(outfile,"\n");
+//       }
 
-/* .. Echo State Vector */
-      fprintf(outfile,"\n\n\nState Vector Map:\n\n");
-      fprintf(outfile,"Body/Joint   RotDOF   TrnDOF   RotSeq   TrnSeq       u[]      x[]\n");
-      fprintf(outfile,"  B[00]        wn       ---      123      ---       00-02    00-03\n");
-      for(Ig=0;Ig<S->Ng;Ig++) {
-         G = &S->G[Ig];
-         Nu = G->RotDOF+G->TrnDOF;
-         Nx = (G->IsSpherical ? Nu+1 : Nu);
-         fprintf(outfile,"  G[%02ld]       %3ld      %3ld       %3ld      %3ld       %02ld-%02ld    %02ld-%02ld\n",
-            Ig,G->RotDOF,G->TrnDOF,G->RotSeq,G->TrnSeq,G->Rotu0,G->Rotu0+Nu-1,G->Rotx0,G->Rotx0+Nx-1);
-      }
-      fprintf(outfile,"  B[00]       ---       vn       ---      123       %02ld-%02ld    %02ld-%02ld\n",
-      D->Nu-3,D->Nu-1,D->Nx-3,D->Nx-1);
+// /* .. Echo State Vector */
+//       fprintf(outfile,"\n\n\nState Vector Map:\n\n");
+//       fprintf(outfile,"Body/Joint   RotDOF   TrnDOF   RotSeq   TrnSeq       u[]      x[]\n");
+//       fprintf(outfile,"  B[00]        wn       ---      123      ---       00-02    00-03\n");
+//       for(Ig=0;Ig<S->Ng;Ig++) {
+//          G = &S->G[Ig];
+//          Nu = G->RotDOF+G->TrnDOF;
+//          Nx = (G->IsSpherical ? Nu+1 : Nu);
+//          fprintf(outfile,"  G[%02ld]       %3ld      %3ld       %3ld      %3ld       %02ld-%02ld    %02ld-%02ld\n",
+//             Ig,G->RotDOF,G->TrnDOF,G->RotSeq,G->TrnSeq,G->Rotu0,G->Rotu0+Nu-1,G->Rotx0,G->Rotx0+Nx-1);
+//       }
+//       fprintf(outfile,"  B[00]       ---       vn       ---      123       %02ld-%02ld    %02ld-%02ld\n",
+//       D->Nu-3,D->Nu-1,D->Nx-3,D->Nx-1);
 
-/* .. DOF/Constraint Map */
-      fprintf(outfile,"\n\n\nMap all 6*Nb potential DOF Axes into DOFs or Constraints\n\n");
-      fprintf(outfile,"*****************************************************************\n");
-      fprintf(outfile,"Body 00:   RotSeq = 123   TrnSeq = 123\n");
-      fprintf(outfile,"                                Col in   Col in       Col in\n");
-      fprintf(outfile,"Axis      F/C    u[]  x[]       u%02ld.42   x%02ld.42   Constraint%02ld.42\n",S->ID,S->ID,S->ID);
-      fprintf(outfile,"-----------------------------------------------------------------\n");
-      fprintf(outfile,"Rot1       F      00   00         01       01           --\n");
-      fprintf(outfile,"Rot2       F      01   01         02       02           --\n");
-      fprintf(outfile,"Rot3       F      02   02         03       03           --\n");
-      fprintf(outfile,"(Sph)      -      --   03         --       04           --\n\n");
-      fprintf(outfile,"Trn1       F      %02ld   %02ld         %02ld       %02ld           --\n",D->Nu-3,D->Nx-3,D->Nu-2,D->Nx-2);
-      fprintf(outfile,"Trn2       F      %02ld   %02ld         %02ld       %02ld           --\n",D->Nu-2,D->Nx-2,D->Nu-1,D->Nx-1);
-      fprintf(outfile,"Trn3       F      %02ld   %02ld         %02ld       %02ld           --\n",D->Nu-1,D->Nx-1,D->Nu,D->Nx);
-      for(Ig=0;Ig<S->Ng;Ig++) {
-         G = &S->G[Ig];
-         fprintf(outfile,"*****************************************************************\n");
-         fprintf(outfile,"Joint %02ld:   RotSeq = %3ld   TrnSeq = %3ld\n",Ig,G->RotSeq,G->TrnSeq);
-         fprintf(outfile,"                                Col in   Col in       Col in\n");
-         fprintf(outfile,"Axis      F/C    u[]  x[]       u%02ld.42   x%02ld.42   Constraint%02ld.42\n",S->ID,S->ID,S->ID);
-         fprintf(outfile,"-----------------------------------------------------------------\n");
-         for(i=0;i<G->RotDOF;i++) {
-            fprintf(outfile,"Rot%ld       F      %02ld   %02ld         %02ld       %02ld           --\n",
-               i+1,G->Rotu0+i,G->Rotx0+i,G->Rotu0+i+1,G->Rotx0+i+1);
-         }
-         for(i=0;i<3-G->RotDOF;i++) {
-            fprintf(outfile,"Rot%ld       C      --   --         --       --           %02ld\n",G->RotDOF+i+1,G->Rotc0+i+1);
-         }
-         if (G->IsSpherical) {
-            fprintf(outfile,"(Sph)      -      --   %02ld         --       %02ld           --\n",G->Rotx0+3,G->Rotx0+4);
-         }
-         fprintf(outfile,"\n");
-         for(i=0;i<G->TrnDOF;i++) {
-            fprintf(outfile,"Trn%ld       F      %02ld   %02ld         %02ld       %02ld           --\n",
-               i,G->Trnu0+i+1,G->Trnx0+i,G->Trnu0+i+1,G->Trnx0+i+1);
-         }
-         for(i=0;i<3-G->TrnDOF;i++) {
-            fprintf(outfile,"Trn%ld       C      --   --         --       --           %02ld\n",G->TrnDOF+i+1,G->Trnc0+i+1);
-         }
-      }
-      fclose(outfile);
+// /* .. DOF/Constraint Map */
+//       fprintf(outfile,"\n\n\nMap all 6*Nb potential DOF Axes into DOFs or Constraints\n\n");
+//       fprintf(outfile,"*****************************************************************\n");
+//       fprintf(outfile,"Body 00:   RotSeq = 123   TrnSeq = 123\n");
+//       fprintf(outfile,"                                Col in   Col in       Col in\n");
+//       fprintf(outfile,"Axis      F/C    u[]  x[]       u%02ld.42   x%02ld.42   Constraint%02ld.42\n",S->ID,S->ID,S->ID);
+//       fprintf(outfile,"-----------------------------------------------------------------\n");
+//       fprintf(outfile,"Rot1       F      00   00         01       01           --\n");
+//       fprintf(outfile,"Rot2       F      01   01         02       02           --\n");
+//       fprintf(outfile,"Rot3       F      02   02         03       03           --\n");
+//       fprintf(outfile,"(Sph)      -      --   03         --       04           --\n\n");
+//       fprintf(outfile,"Trn1       F      %02ld   %02ld         %02ld       %02ld           --\n",D->Nu-3,D->Nx-3,D->Nu-2,D->Nx-2);
+//       fprintf(outfile,"Trn2       F      %02ld   %02ld         %02ld       %02ld           --\n",D->Nu-2,D->Nx-2,D->Nu-1,D->Nx-1);
+//       fprintf(outfile,"Trn3       F      %02ld   %02ld         %02ld       %02ld           --\n",D->Nu-1,D->Nx-1,D->Nu,D->Nx);
+//       for(Ig=0;Ig<S->Ng;Ig++) {
+//          G = &S->G[Ig];
+//          fprintf(outfile,"*****************************************************************\n");
+//          fprintf(outfile,"Joint %02ld:   RotSeq = %3ld   TrnSeq = %3ld\n",Ig,G->RotSeq,G->TrnSeq);
+//          fprintf(outfile,"                                Col in   Col in       Col in\n");
+//          fprintf(outfile,"Axis      F/C    u[]  x[]       u%02ld.42   x%02ld.42   Constraint%02ld.42\n",S->ID,S->ID,S->ID);
+//          fprintf(outfile,"-----------------------------------------------------------------\n");
+//          for(i=0;i<G->RotDOF;i++) {
+//             fprintf(outfile,"Rot%ld       F      %02ld   %02ld         %02ld       %02ld           --\n",
+//                i+1,G->Rotu0+i,G->Rotx0+i,G->Rotu0+i+1,G->Rotx0+i+1);
+//          }
+//          for(i=0;i<3-G->RotDOF;i++) {
+//             fprintf(outfile,"Rot%ld       C      --   --         --       --           %02ld\n",G->RotDOF+i+1,G->Rotc0+i+1);
+//          }
+//          if (G->IsSpherical) {
+//             fprintf(outfile,"(Sph)      -      --   %02ld         --       %02ld           --\n",G->Rotx0+3,G->Rotx0+4);
+//          }
+//          fprintf(outfile,"\n");
+//          for(i=0;i<G->TrnDOF;i++) {
+//             fprintf(outfile,"Trn%ld       F      %02ld   %02ld         %02ld       %02ld           --\n",
+//                i,G->Trnu0+i+1,G->Trnx0+i,G->Trnu0+i+1,G->Trnx0+i+1);
+//          }
+//          for(i=0;i<3-G->TrnDOF;i++) {
+//             fprintf(outfile,"Trn%ld       C      --   --         --       --           %02ld\n",G->TrnDOF+i+1,G->Trnc0+i+1);
+//          }
+//       }
+//       fclose(outfile);
 }
 /**********************************************************************/
 void InitFlexModes(struct SCType *S)
@@ -2863,7 +2863,7 @@ void InitSpacecraft(struct SCType *S)
       BodyStatesToNodeStates(S);
       SCMassProps(S);
       FindTotalAngMom(S);
-      EchoDyn(S);
+      // EchoDyn(S);
 
 /* .. Load geometry */
       for(j=0;j<S->Nb;j++) {
