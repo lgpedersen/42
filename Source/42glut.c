@@ -1362,6 +1362,14 @@ long GuiCmdInterpreter(char CmdLine[512], double *CmdTime)
          else if (FrameChar == 'S') POV.Frame = FRAME_S;
          else if (FrameChar == 'B') POV.Frame = FRAME_B;
       }
+      // if (sscanf(CmdLine,"%lf PAUSE",CmdTime) == 1) {
+      //    NewCmdProcessed = TRUE;
+      //    PauseFlag = TRUE;
+      // }
+      if (sscanf(CmdLine,"%lf PAUSE %s",CmdTime,response) == 2) {
+         NewCmdProcessed = TRUE;
+         PauseFlag = DecodeString(response);
+      }
 
       return(NewCmdProcessed);
 }

@@ -247,7 +247,7 @@ CFLAGS = -fpic -Wall -Wshadow -Wno-deprecated $(XWARN) -g  $(ANSIFLAGS) $(GLINC)
 
 
 ##########################  Rules to link 42  #############################
-
+all: 42
 42 : $(42OBJ) $(GUIOBJ) $(SIMIPCOBJ) $(FFTBOBJ) $(SLOSHOBJ) $(KITOBJ) $(ACOBJ) $(GMSECOBJ) $(RBTOBJ)
 	$(CC) $(LFLAGS) $(GMSECBIN) -o $(EXENAME) $(42OBJ) $(GUIOBJ) $(FFTBOBJ) $(SLOSHOBJ) $(KITOBJ) $(ACOBJ) $(GMSECOBJ) $(SIMIPCOBJ) $(RBTOBJ) $(LIBS) $(GMSECLIB)
 
@@ -423,11 +423,14 @@ $(OBJ)42fssalbedo.o         : $(SRC)42fssalbedo.c
 	$(CC) $(CFLAGS) -c $(SRC)42fssalbedo.c -o $(OBJ)42fssalbedo.o
 
 ########################  Miscellaneous Rules  ############################
-clean :
+cleanoutput:
+	rm -f */*.42 Screenshots/CamFrame*ppm
+
+clean: cleanoutput
 ifeq ($(42PLATFORM),_WIN32)
 	del .\Object\*.o .\$(EXENAME) .\InOut\*.42
 else ifeq ($(42PLATFORM),_WIN64)
 	del .\Object\*.o .\$(EXENAME) .\InOut\*.42
 else
-	rm -f $(OBJ)*.o ./$(EXENAME) ./AcApp $(KITDIR)42kit.so $(INOUT)*.42 ./Standalone/*.42 ./Demo/*.42 ./Rx/*.42 ./Tx/*.42
+	rm -f $(OBJ)*.o ./$(EXENAME) ./AcApp $(KITDIR)42kit.so
 endif

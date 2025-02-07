@@ -22,10 +22,11 @@ void ReadFromSocket(SOCKET Socket, long EchoEnabled)
       int NumBytes;
       double DbleVal[30];
       long LongVal[30];
+      static int firstRead = TRUE;
 
       long Year,doy,Hour,Minute;
       double Second;
-      
+
       memset(Msg,'\0',16384);
       NumBytes = recv(Socket,Msg,16384,0);
       if (NumBytes <= 0) return; /* Bail out if no message */
@@ -1178,6 +1179,22 @@ void ReadFromSocket(SOCKET Socket, long EchoEnabled)
                      SC[Isc].AC.ThrSteerCtrl.Kp[2] = DbleVal[2];
                   }
 
+                  // if (sscanf(line,"TIME %ld-%ld-%ld:%ld:%lf\n",
+                  //          &Year,&doy,&Hour,&Minute,&Second) == 5) {
+                  //       struct DateType time;
+                  //       time.Year = Year;
+                  //       time.doy = doy;
+                  //       time.Hour = Hour;
+                  //       time.Minute = Minute;
+                  //       time.Second = Second;
+                  //       // printf("%ld %ld %d %d %f", Year, doy, Hour, Minute, Second);
+                  //       DOY2MD(UTC.Year,UTC.doy,&UTC.Month,&UTC.Day);
+                  //       CivilTime = DateToTime(UTC.Year,UTC.Month,UTC.Day,UTC.Hour,UTC.Minute,UTC.Second);
+                  //       AtomicTime = CivilTime + LeapSec;
+                  //       GpsTime = AtomicTime - 19.0;
+                  //       DynTime = AtomicTime + 32.184;
+                  // }
+
                }
             }
          }
@@ -1203,11 +1220,17 @@ void ReadFromSocket(SOCKET Socket, long EchoEnabled)
          UTC.Hour = Hour;
          UTC.Minute = Minute;
          UTC.Second = Second;
+         // printf("%ld %ld %d %d %f", Year, doy, Hour, Minute, Second);
          DOY2MD(UTC.Year,UTC.doy,&UTC.Month,&UTC.Day);
          CivilTime = DateToTime(UTC.Year,UTC.Month,UTC.Day,UTC.Hour,UTC.Minute,UTC.Second);
          AtomicTime = CivilTime + LeapSec;
          GpsTime = AtomicTime - 19.0;
          DynTime = AtomicTime + 32.184;
+         if (firstRead) {
+            DynTime0 = DynTime;
+            firstRead = FALSE;
+         }
+         // printf(" -- %f\n", DynTime0);
          TT.JulDay = TimeToJD(DynTime);
          TimeToDate(DynTime,&TT.Year,&TT.Month,&TT.Day,
             &TT.Hour,&TT.Minute,&TT.Second,DTSIM);
@@ -1215,6 +1238,7 @@ void ReadFromSocket(SOCKET Socket, long EchoEnabled)
          UTC.JulDay = TimeToJD(CivilTime);
          GpsTimeToGpsDate(GpsTime,&GpsRollover,&GpsWeek,&GpsSecond);
          SimTime = DynTime-DynTime0;
+         // printf("HERE: %f %f %f\n", DynTime, DynTime0, SimTime);
       }
 
 

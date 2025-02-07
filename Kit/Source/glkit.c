@@ -21,6 +21,14 @@
 ** #endif
 */
 
+void makeScreenshotDir() {
+   #ifdef _WIN32
+         _mkdir("./Screenshots");
+   #else
+         mkdir("./Screenshots", 0755);
+   #endif
+}
+
 /**********************************************************************/
 /*  Available fonts:                                                  */
 /*     GLUT_BITMAP_8_BY_13                                            */
@@ -859,6 +867,7 @@ void BuildViewMatrix(double CEN[3][3], double pen[3],
 void CaptureScreenToPpm(const char *path, const char *filename,
                         long Nh, long Nw)
 {
+      makeScreenshotDir();
       GLubyte *Data,*p;
       FILE *file;
       long i,j,Nr;
