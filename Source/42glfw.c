@@ -19,6 +19,7 @@
 #define EXTERN
 #include "42glfw.h"
 #undef EXTERN
+#include "PngImage.h"
 
 /* #ifdef __cplusplus
 ** namespace _42 {
@@ -98,9 +99,9 @@ void MainLoop(void)
                }
                if (CaptureCam) {
                   CamFrame++;
-                  sprintf(CamFileName,"CamFrame%05ld.ppm",CamFrame);
+                  sprintf(CamFileName,"CamFrame%05ld.png",CamFrame);
                   glfwMakeContextCurrent(CamWindow);
-                  CaptureScreenToPpm("./Screenshots/",
+                  CaptureScreenToPng("./Screenshots/",
                      CamFileName,CamHeight,CamWidth);
                   printf("Captured Cam Frame %ld\n",CamFrame);
                   if (CamFrame > MaxCamFrame) CamFrame = 0;
@@ -176,14 +177,14 @@ void KeyHandler(GLFWwindow *Window, int key, int scancode,
                break;
             case GLFW_KEY_F1 :
                glfwMakeContextCurrent(CamWindow);
-               CaptureScreenToPpm("./Screenshots/",
-                  "CamSnap.ppm",CamHeight,CamWidth);
+               CaptureScreenToPng("./Screenshots/",
+                  "CamSnap.png",CamHeight,CamWidth);
                break;
             case GLFW_KEY_F2 :
                if (MapWindowExists) {
                   glfwMakeContextCurrent(MapWindow);
-                  CaptureScreenToPpm("./Screenshots/",
-                     "MapSnap.ppm",MapHeight,MapWidth);
+                  CaptureScreenToPng("./Screenshots/",
+                     "MapSnap.png",MapHeight,MapWidth);
                }
                break;
          }
@@ -1240,8 +1241,8 @@ long GuiCmdInterpreter(char CmdLine[512], double *CmdTime)
          NewCmdProcessed = TRUE;
          if (DecodeString(response) == TRUE) {
             glfwMakeContextCurrent(CamWindow);
-            CaptureScreenToPpm("./Screenshots/",
-               "CamSnap.ppm",CamHeight,CamWidth);
+            CaptureScreenToPng("./Screenshots/",
+               "CamSnap.png",CamHeight,CamWidth);
          }
       }
 
@@ -1249,8 +1250,8 @@ long GuiCmdInterpreter(char CmdLine[512], double *CmdTime)
          NewCmdProcessed = TRUE;
          if (DecodeString(response) == TRUE && MapWindowExists) {
             glfwMakeContextCurrent(MapWindow);
-            CaptureScreenToPpm("./Screenshots/",
-               "MapSnap.ppm",MapHeight,MapWidth);
+            CaptureScreenToPng("./Screenshots/",
+               "MapSnap.png",MapHeight,MapWidth);
          }
       }
 

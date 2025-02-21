@@ -864,6 +864,31 @@ void BuildViewMatrix(double CEN[3][3], double pen[3],
       ViewMatrix[15] = 1.0f;
 }
 /**********************************************************************/
+void CaptureScreenToPng(const char *path, const char *filename,
+                        long Nh, long Nw)
+{
+      makeScreenshotDir();
+      char FileName[256];
+      strcpy(FileName,path);
+      strcat(FileName,filename);
+
+      GLubyte *Data,*p;
+      long i,j,Nr;
+
+      Nr = 3*Nw;
+      Data = (GLubyte *) calloc(3*Nh*Nw,sizeof(GLubyte));
+
+      if (Data == NULL) {
+         printf("calloc returned null pointer in CaptureScreenToPng.  Bailing out!\n");
+         exit(1);
+      }
+
+      glReadPixels(0,0,Nw,Nh,GL_RGB,GL_UNSIGNED_BYTE,Data);
+      savePngImage(FileName, Nw, Nh, Data, "");
+
+      free(Data);
+}
+/**********************************************************************/
 void CaptureScreenToPpm(const char *path, const char *filename,
                         long Nh, long Nw)
 {
@@ -922,6 +947,48 @@ void TexToPpm(const char *path, const char *filename,
       }
       fclose(file);
 }
+/**********************************************************************/
+/* wrap parm is usually either GL_REPEAT or GL_CLAMP                  */
+GLuint PngToTexTag(const char *path, const char *filename,
+                   int BytesPerPixel, GLuint wrap)
+{
+   char FileName[256];
+   strcpy(FileName,path);
+   strcat(FileName,filename);
+   PngImg img;
+   loadPngImage(FileName, &img);
+
+   GLuint TexTag;
+
+   if (img.w == 0 || img.h == 0) {
+      printf("image %s could not be loaded\n", filename);
+      exit(1);
+   }
+
+   glGenTextures(1,&TexTag);
+   glBindTexture(GL_TEXTURE_2D,TexTag);
+   glTexParameteri(GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,wrap);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,wrap);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+   if (BytesPerPixel == 1) {
+      glTexImage2D(GL_TEXTURE_2D,0,GL_LUMINANCE,img.w,img.h,0,GL_LUMINANCE,
+         GL_UNSIGNED_BYTE,img.img);
+   }
+   else if (BytesPerPixel == 3) {
+      glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,img.w,img.h,0,GL_RGB,
+         GL_UNSIGNED_BYTE,img.img);
+   }
+   else if (BytesPerPixel == 4) {
+      glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,img.w,img.h,0,GL_RGBA,
+         GL_UNSIGNED_BYTE,img.img);
+   }
+
+   return TexTag;
+}
+
 /**********************************************************************/
 /* wrap parm is usually either GL_REPEAT or GL_CLAMP                  */
 GLuint PpmToTexTag(const char *path, const char *filename,int BytesPerPixel,

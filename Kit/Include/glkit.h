@@ -20,6 +20,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "PngImage.h"
+
 #ifdef __linux__
    #define GL_GLEXT_PROTOTYPES
    #include <GL/glut.h>
@@ -136,10 +138,14 @@ void BuildModelMatrix(double CBN[3][3], double pbn[3],
    float ModelMatrix[16]);
 void BuildViewMatrix(double CEN[3][3], double pen[3],
    float ViewMatrix[16]);
+void CaptureScreenToPng(const char *path, const char *filename,
+                        long Nh, long Nw);
 void CaptureScreenToPpm(const char *path, const char *filename,
                         long Nh, long Nw);
 void TexToPpm(const char *path, const char *filename,
               long Nh, long Nw, long Nb, float *Data);
+GLuint PngToTexTag(const char *path, const char *filename,int BytesPerPixel,
+                   GLuint wrap);
 GLuint PpmToTexTag(const char *path, const char *filename,int BytesPerPixel,
                    GLuint wrap);
 GLuint Ppm1DToTexTag(const char *path, const char *filename,int BytesPerPixel,

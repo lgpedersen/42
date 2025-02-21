@@ -19,6 +19,7 @@
 #define EXTERN 
 #include "42glut.h"
 #undef EXTERN
+#include "PngImage.h"
 
 /* #ifdef __cplusplus
 ** namespace _42 {
@@ -107,9 +108,9 @@ void Idle(void)
                glutPostRedisplay();
                if (CaptureCam) {
                   CamFrame++;
-                  sprintf(CamFileName,"CamFrame%05ld.ppm",CamFrame);
+                  sprintf(CamFileName,"CamFrame%05ld.png",CamFrame);
                   glutSetWindow(CamWindow);
-                  CaptureScreenToPpm("./Screenshots/",
+                  CaptureScreenToPng("./Screenshots/",
                      CamFileName,CamHeight,CamWidth);
                   printf("Captured Cam Frame %ld\n",CamFrame);
                   if (CamFrame > MaxCamFrame) CamFrame = 0;
@@ -203,14 +204,14 @@ void SpecialKeyHandler(int key, int x, int y)
             break;
          case GLUT_KEY_F1 :
             glutSetWindow(CamWindow);
-            CaptureScreenToPpm("./Screenshots/",
-               "CamSnap.ppm",CamHeight,CamWidth);
+            CaptureScreenToPng("./Screenshots/",
+               "CamSnap.png",CamHeight,CamWidth);
             break;
          case GLUT_KEY_F2 :
             if (MapWindowExists) {
                glutSetWindow(MapWindow);
-               CaptureScreenToPpm("./Screenshots/",
-                  "MapSnap.ppm",MapHeight,MapWidth);
+               CaptureScreenToPng("./Screenshots/",
+                  "MapSnap.png",MapHeight,MapWidth);
             }
             break;
       }
@@ -1264,8 +1265,8 @@ long GuiCmdInterpreter(char CmdLine[512], double *CmdTime)
          NewCmdProcessed = TRUE;
          if (DecodeString(response) == TRUE) {
             glutSetWindow(CamWindow);
-            CaptureScreenToPpm("./Screenshots/",
-               "CamSnap.ppm",CamHeight,CamWidth);
+            CaptureScreenToPng("./Screenshots/",
+               "CamSnap.png",CamHeight,CamWidth);
          }
       }
 
@@ -1273,8 +1274,8 @@ long GuiCmdInterpreter(char CmdLine[512], double *CmdTime)
          NewCmdProcessed = TRUE;
          if (DecodeString(response) == TRUE && MapWindowExists) {
             glutSetWindow(MapWindow);
-            CaptureScreenToPpm("./Screenshots/",
-               "MapSnap.ppm",MapHeight,MapWidth);
+            CaptureScreenToPng("./Screenshots/",
+               "MapSnap.png",MapHeight,MapWidth);
          }
       }
 
