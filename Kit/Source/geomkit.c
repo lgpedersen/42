@@ -895,7 +895,7 @@ long OCProjectRayOntoGeom(double Point[3],double DirVec[3],
       return(FoundPoly);
 }
 /*********************************************************************/
-struct GeomType *LoadWingsObjFile(const char ModelPath[80],const char ObjFilename[40],
+struct GeomType *LoadWingsObjFile(const char *ModelPath,const char *ObjFilename,
                        struct MatlType **MatlPtr, long *Nmatl,
                        struct GeomType *Geom, long *Ngeom, long *GeomTag,
                        long EdgesEnabled)
@@ -1285,8 +1285,8 @@ struct GeomType *LoadWingsObjFile(const char ModelPath[80],const char ObjFilenam
 #undef D2R
 }
 /*********************************************************************/
-void WriteGeomToObjFile(struct MatlType *Matl,struct GeomType *Geom,const char Path[80],
-   const char FileName[40])
+void WriteGeomToObjFile(struct MatlType *Matl,struct GeomType *Geom,const char *Path,
+   const char *FileName)
 {
       char MtlFileName[80],ObjFileName[80];
       FILE *MtlFile,*ObjFile;

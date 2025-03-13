@@ -18,11 +18,16 @@ void ReadFromFile(FILE *StateFile, long EchoEnabled)
       long Done;
       double DbleVal[30];
       long LongVal[30];
+      static int firstRead = TRUE;
 
       long Year,doy,Hour,Minute;
       double Second;
       Done = 0;
       while(!Done) {
+         if (feof(StateFile)) {
+            Done = 1;
+            return;
+         }
          fgets(line,511,StateFile);
          if (EchoEnabled) printf("%s",line);
 
@@ -1185,6 +1190,10 @@ void ReadFromFile(FILE *StateFile, long EchoEnabled)
          AtomicTime = CivilTime + LeapSec;
          GpsTime = AtomicTime - 19.0;
          DynTime = AtomicTime + 32.184;
+         if (firstRead) {
+            DynTime0 = DynTime;
+            firstRead = FALSE;
+         }
          TT.JulDay = TimeToJD(DynTime);
          TimeToDate(DynTime,&TT.Year,&TT.Month,&TT.Day,
             &TT.Hour,&TT.Minute,&TT.Second,DTSIM);

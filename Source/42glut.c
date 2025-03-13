@@ -26,6 +26,14 @@
 ** #endif
 */
 
+void makeScreenshotDir() {
+#ifdef _WIN32
+      _mkdir("./Screenshots");
+#else
+      mkdir("./Screenshots", 0755);
+#endif
+}
+
 /*********************************************************************/
 void SetupViewVolume(int width, int height)
 {
@@ -151,6 +159,7 @@ void AsciiKeyHandler(unsigned char CharCode, int x, int y)
             case 'c' :
                if (CaptureCam) CaptureCam = FALSE;
                else {
+                  makeScreenshotDir();
                   CaptureCam = TRUE;
                   CamFrame = 0;
                }
@@ -1258,6 +1267,9 @@ long GuiCmdInterpreter(char CmdLine[512], double *CmdTime)
       if (sscanf(CmdLine,"%lf CaptureCam %s",CmdTime,response) == 2) {
          NewCmdProcessed = TRUE;
          CaptureCam = DecodeString(response);
+         if (CaptureCam) {
+            makeScreenshotDir();
+         }
       }
 
       if (sscanf(CmdLine,"%lf CamSnap %s",CmdTime,response) == 2) {
@@ -1361,6 +1373,14 @@ long GuiCmdInterpreter(char CmdLine[512], double *CmdTime)
          else if (FrameChar == 'F') POV.Frame = FRAME_F;
          else if (FrameChar == 'S') POV.Frame = FRAME_S;
          else if (FrameChar == 'B') POV.Frame = FRAME_B;
+      }
+      // if (sscanf(CmdLine,"%lf PAUSE",CmdTime) == 1) {
+      //    NewCmdProcessed = TRUE;
+      //    PauseFlag = TRUE;
+      // }
+      if (sscanf(CmdLine,"%lf PAUSE %s",CmdTime,response) == 2) {
+         NewCmdProcessed = TRUE;
+         PauseFlag = DecodeString(response);
       }
 
       return(NewCmdProcessed);
